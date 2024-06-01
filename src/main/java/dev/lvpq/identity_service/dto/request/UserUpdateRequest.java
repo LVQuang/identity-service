@@ -1,8 +1,11 @@
 package dev.lvpq.identity_service.dto.request;
 
+import jakarta.validation.constraints.Size;
+
 import java.time.LocalDate;
 
 public class UserUpdateRequest {
+    @Size(min = 8, message = "Password must at least 8 characters")
     private String password;
     private String firstname;
     private String lastname;

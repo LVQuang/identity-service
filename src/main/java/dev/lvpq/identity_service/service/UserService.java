@@ -15,6 +15,9 @@ public class UserService {
     private UserRepository userRepository;
 
     public User createRequest(UserCreationRequest request) {
+        if (userRepository.existsByUsername(request.getUsername()))
+            throw new RuntimeException("User exists");
+
         User user = new User();
 
         user.setUsername(request.getUsername());
@@ -47,6 +50,8 @@ public class UserService {
     }
 
     public void deleteRequest(String id) {
+        if (!userRepository.existsById(id))
+            throw new RuntimeException("User doesn't exists");
         userRepository.deleteById(id);
     }
 }
