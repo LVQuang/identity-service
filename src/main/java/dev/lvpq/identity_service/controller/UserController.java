@@ -2,6 +2,7 @@ package dev.lvpq.identity_service.controller;
 
 import dev.lvpq.identity_service.dto.request.UserCreationRequest;
 import dev.lvpq.identity_service.dto.request.UserUpdateRequest;
+import dev.lvpq.identity_service.dto.response.ApiResponse;
 import dev.lvpq.identity_service.entity.User;
 import dev.lvpq.identity_service.service.UserService;
 import jakarta.validation.Valid;
@@ -17,8 +18,12 @@ public class UserController {
     private UserService userService;
 
     @PostMapping
-    User createUser(@RequestBody @Valid UserCreationRequest request) {
-        return userService.createRequest(request);
+    ApiResponse<User> createUser(@RequestBody @Valid UserCreationRequest request) {
+        var response = new ApiResponse<User>();
+        response.setCode(1000);
+        response.setMessage("Success Insert User!");
+        response.setResult(userService.createRequest(request));
+        return response;
     }
 
     @GetMapping

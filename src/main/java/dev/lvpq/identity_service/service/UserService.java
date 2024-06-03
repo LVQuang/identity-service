@@ -3,6 +3,8 @@ package dev.lvpq.identity_service.service;
 import dev.lvpq.identity_service.dto.request.UserCreationRequest;
 import dev.lvpq.identity_service.dto.request.UserUpdateRequest;
 import dev.lvpq.identity_service.entity.User;
+import dev.lvpq.identity_service.exception.AppException;
+import dev.lvpq.identity_service.exception.ErrorCode;
 import dev.lvpq.identity_service.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,7 +18,7 @@ public class UserService {
 
     public User createRequest(UserCreationRequest request) {
         if (userRepository.existsByUsername(request.getUsername()))
-            throw new RuntimeException("User exists");
+            throw new AppException(ErrorCode.USER_EXISTS);
 
         User user = new User();
 
@@ -35,7 +37,7 @@ public class UserService {
 
     public User getByIdRequest(String id) {
         return userRepository.findById(id).
-                orElseThrow(() -> new RuntimeException("User doesn't exists"));
+                orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTS));
     }
 
     public User updateRequest(String id, UserUpdateRequest request) {
@@ -50,8 +52,7 @@ public class UserService {
     }
 
     public void deleteRequest(String id) {
-        if (!userRepository.existsById(id))
-            throw new RuntimeException("User doesn't exists");
-        userRepository.deleteById(id);
+        var user = getByIdRequest(id);
+        userRepository.delete(user);
     }
 }
