@@ -1,0 +1,7 @@
+spring:
+    application: 
+        name: identity-service
+    docker:
+        compose:
+            enabled: true
+            file: docker-compose.yml
