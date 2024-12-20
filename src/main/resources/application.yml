@@ -1,4 +1,12 @@
 spring:
+    datasource:
+        url: "jdbc:mysql://localhost:3306/CS502052"
+        username: root
+        password:
+    jpa:
+        hibernate:
+            ddl-auto: update
+        show-sql: true
     application: 
         name: identity-service
     docker:
