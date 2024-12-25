@@ -7,6 +7,7 @@ import dev.quang.identity_service.Dto.Request.SaveUser;
 import dev.quang.identity_service.Dto.Response.DetailUser;
 import dev.quang.identity_service.Dto.Response.ListUsers;
 import dev.quang.identity_service.Service.UserService;
+import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -29,7 +30,7 @@ public class UserController {
     UserService userService;
 
     @PostMapping()
-    public boolean createUser(@RequestBody SaveUser request) throws Exception {
+    public boolean createUser(@RequestBody @Valid SaveUser request) {
         userService.addUser(request);
         return true;
     }
@@ -45,31 +46,31 @@ public class UserController {
     }
 
     @PutMapping("/{id}")
-    public boolean updateUser(@PathVariable String id, @RequestBody SaveUser request) throws Exception {
+    public boolean updateUser(@PathVariable String id, @RequestBody SaveUser request) {
         userService.updateUser(id, request);;
         return true;
     }
 
     @DeleteMapping()
-    public boolean deleteAll(@RequestBody(required = false) List<String> ids) throws Exception {
+    public boolean deleteAll(@RequestBody(required = false) List<String> ids) {
         userService.deleteAll(ids);
         return true;
     }
 
     @DeleteMapping("/{id}")
-    public boolean deleteUser(@PathVariable("id") String id) throws Exception {
+    public boolean deleteUser(@PathVariable("id") String id) {
         userService.deleteUser(id);
         return true;
     }
 
     @PatchMapping()
-    public boolean hideAll(@RequestBody(required = false) List<String> ids) throws Exception {
+    public boolean hideAll(@RequestBody(required = false) List<String> ids) {
         userService.hideAll(ids);
         return true;
     }
 
     @PatchMapping("/{id}")
-    public boolean hideUser(@PathVariable("id") String id) throws Exception {
+    public boolean hideUser(@PathVariable("id") String id) {
         userService.hideUser(id);
         return true;
     }

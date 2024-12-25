@@ -24,10 +24,10 @@ public class UserService {
     UserRepository userRepository;
     UserSpecification userSpecification;
 
-    public void addUser(SaveUser request) throws Exception {
+    public void addUser(SaveUser request) {
         var user = findByEmail(request.getEmail()); 
         if (findByEmail(request.getEmail()) != null) {
-            throw new Exception("Existing User");
+            throw new RuntimeException("User existed");
         }
 
         user = User.builder()
@@ -53,7 +53,9 @@ public class UserService {
     }
 
     public DetailUser getUser(String id) {
-        var user = userRepository.findById(id).orElse(null);
+        var user = userRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("User not exists"));
+        
         return DetailUser.builder()
                 .email(user.getEmail())
                 .name(user.getName())
@@ -64,14 +66,14 @@ public class UserService {
                 .build();
     }
 
-    public void updateUser(String id, SaveUser request) throws Exception {
+    public void updateUser(String id, SaveUser request) {
         if (findByEmail(request.getEmail()) == null) {
-            throw new Exception("Not Existing User");
+            throw new RuntimeException("User not exist");
         }
 
         var user = userRepository
                 .findById(id)
-                .orElseThrow(() -> new Exception("Not Existing User"));
+                .orElseThrow(() -> new RuntimeException("User not exist"));
 
         user.setEmail(request.getEmail());
         user.setName(request.getName());
@@ -83,32 +85,32 @@ public class UserService {
         userRepository.save(user);
     }
 
-    public void deleteAll(List<String> ids) throws Exception {
+    public void deleteAll(List<String> ids) {
         if (ids == null) {
             userRepository.deleteAll();
         } else {
             var users = userRepository.findAllById(ids);
             if (users.isEmpty()) {
-                throw new Exception("Id list is invalid");
+                throw new RuntimeException("Ids are invalid");
             }
             userRepository.deleteAll(users);
         }
     }
 
-    public void deleteUser(String id) throws Exception {
+    public void deleteUser(String id) {
         var user = userRepository.findById(id)
-            .orElseThrow(() -> new Exception("Not Existing User"));
+            .orElseThrow(() -> new RuntimeException("User not exist"));
         userRepository.delete(user);
     }
 
-    public void hideUser(String id) throws Exception {
+    public void hideUser(String id) {
         var user = userRepository.findById(id)
-            .orElseThrow(() -> new Exception("Not Existing User"));
+            .orElseThrow(() -> new RuntimeException("User not exist"));
         user.setHide(true);
         userRepository.save(user);
     }
 
-    public void hideAll(List<String> ids) throws Exception {
+    public void hideAll(List<String> ids) {
         List<User> users;
         if (ids == null) {
             users = userRepository.findAll();
@@ -116,7 +118,7 @@ public class UserService {
         } else {
             users = userRepository.findAllById(ids);
             if (users.isEmpty()) {
-                throw new Exception("Id list is invalid");
+                throw new RuntimeException("Ids are invalid");
             }
             users.stream()
                 .map(user -> {
