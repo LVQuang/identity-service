@@ -9,6 +9,8 @@ import dev.quang.identity_service.Dto.Request.SaveUser;
 import dev.quang.identity_service.Dto.Response.DetailUser;
 import dev.quang.identity_service.Dto.Response.ListUsers;
 import dev.quang.identity_service.Entity.User;
+import dev.quang.identity_service.Exception.AppException;
+import dev.quang.identity_service.Exception.ErrorCode;
 import dev.quang.identity_service.Respository.UserRepository;
 import dev.quang.identity_service.Specification.UserSpecification;
 import lombok.AccessLevel;
@@ -27,7 +29,7 @@ public class UserService {
     public DetailUser addUser(SaveUser request) {
         var user = findByEmail(request.getEmail()); 
         if (findByEmail(request.getEmail()) != null) {
-            throw new RuntimeException("User existed");
+            throw new AppException(ErrorCode.USER_EXISTS);
         }
 
         user = User.builder()
@@ -63,7 +65,7 @@ public class UserService {
 
     public DetailUser getUser(String id) {
         var user = userRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("User not exists"));
+                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTS));
         
         return DetailUser.builder()
                 .email(user.getEmail())
@@ -77,12 +79,12 @@ public class UserService {
 
     public DetailUser updateUser(String id, SaveUser request) {
         if (findByEmail(request.getEmail()) == null) {
-            throw new RuntimeException("User not exist");
+            throw new AppException(ErrorCode.USER_NOT_EXISTS);
         }
 
         var user = userRepository
                 .findById(id)
-                .orElseThrow(() -> new RuntimeException("User not exist"));
+                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTS));
 
         user.setEmail(request.getEmail());
         user.setName(request.getName());
@@ -109,7 +111,7 @@ public class UserService {
         } else {
             var users = userRepository.findAllById(ids);
             if (users.isEmpty()) {
-                throw new RuntimeException("Ids are invalid");
+                throw new AppException(ErrorCode.ID_INVALID);
             }
             userRepository.deleteAll(users);
         }
@@ -117,13 +119,13 @@ public class UserService {
 
     public void deleteUser(String id) {
         var user = userRepository.findById(id)
-            .orElseThrow(() -> new RuntimeException("User not exist"));
+            .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTS));
         userRepository.delete(user);
     }
 
     public void hideUser(String id) {
         var user = userRepository.findById(id)
-            .orElseThrow(() -> new RuntimeException("User not exist"));
+            .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTS));
         user.setHide(true);
         userRepository.save(user);
     }
@@ -136,7 +138,7 @@ public class UserService {
         } else {
             users = userRepository.findAllById(ids);
             if (users.isEmpty()) {
-                throw new RuntimeException("Ids are invalid");
+                throw new AppException(ErrorCode.ID_INVALID);
             }
             users.stream().forEach(user -> user.setHide(true));   
         }

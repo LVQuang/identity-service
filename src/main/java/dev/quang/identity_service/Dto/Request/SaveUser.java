@@ -18,7 +18,7 @@ import lombok.experimental.FieldDefaults;
 public class SaveUser {
     String email;
     String name;
-    @Size(min = 5, message = "At least 5 characters")
+    @Size(min = 5, message = "LENGTH_PASSWORD")
     String password;
     String firstname;
     String lastname;
