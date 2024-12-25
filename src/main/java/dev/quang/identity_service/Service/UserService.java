@@ -24,7 +24,7 @@ public class UserService {
     UserRepository userRepository;
     UserSpecification userSpecification;
 
-    public void addUser(SaveUser request) {
+    public DetailUser addUser(SaveUser request) {
         var user = findByEmail(request.getEmail()); 
         if (findByEmail(request.getEmail()) != null) {
             throw new RuntimeException("User existed");
@@ -39,6 +39,15 @@ public class UserService {
             .dob(request.getDob())
             .build();
         userRepository.save(user);
+
+        return DetailUser.builder()
+            .email(user.getEmail())
+            .name(user.getName())
+            .password(user.getPassword())
+            .firstname(user.getFirstname())
+            .lastname(user.getLastname())
+            .dob(user.getDob())
+            .build();
     }
 
     public List<ListUsers> getAllsUsers() {
@@ -66,7 +75,7 @@ public class UserService {
                 .build();
     }
 
-    public void updateUser(String id, SaveUser request) {
+    public DetailUser updateUser(String id, SaveUser request) {
         if (findByEmail(request.getEmail()) == null) {
             throw new RuntimeException("User not exist");
         }
@@ -83,6 +92,15 @@ public class UserService {
         user.setDob(request.getDob());
                 
         userRepository.save(user);
+
+        return DetailUser.builder()
+                .email(user.getEmail())
+                .name(user.getName())
+                .password(user.getPassword())
+                .firstname(user.getFirstname())
+                .lastname(user.getLastname())
+                .dob(user.getDob())
+                .build();
     }
 
     public void deleteAll(List<String> ids) {
@@ -120,11 +138,7 @@ public class UserService {
             if (users.isEmpty()) {
                 throw new RuntimeException("Ids are invalid");
             }
-            users.stream()
-                .map(user -> {
-                    user.setHide(true);
-                    return user;
-                });   
+            users.stream().forEach(user -> user.setHide(true));   
         }
         userRepository.saveAll(users);    
     }
