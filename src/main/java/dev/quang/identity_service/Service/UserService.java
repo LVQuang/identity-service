@@ -11,6 +11,7 @@ import dev.quang.identity_service.Dto.Response.ListUsers;
 import dev.quang.identity_service.Entity.User;
 import dev.quang.identity_service.Exception.AppException;
 import dev.quang.identity_service.Exception.ErrorCode;
+import dev.quang.identity_service.Mapper.UserMapper;
 import dev.quang.identity_service.Respository.UserRepository;
 import dev.quang.identity_service.Specification.UserSpecification;
 import lombok.AccessLevel;
@@ -24,6 +25,7 @@ import lombok.extern.slf4j.Slf4j;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class UserService {
     UserRepository userRepository;
+    UserMapper userMapper;
     UserSpecification userSpecification;
 
     public DetailUser addUser(SaveUser request) {
@@ -32,24 +34,10 @@ public class UserService {
             throw new AppException(ErrorCode.USER_EXISTS);
         }
 
-        user = User.builder()
-            .email(request.getEmail())
-            .name(request.getName())
-            .password(request.getPassword())
-            .firstname(request.getFirstname())
-            .lastname(request.getLastname())
-            .dob(request.getDob())
-            .build();
+        user = userMapper.toUser(request);
         userRepository.save(user);
 
-        return DetailUser.builder()
-            .email(user.getEmail())
-            .name(user.getName())
-            .password(user.getPassword())
-            .firstname(user.getFirstname())
-            .lastname(user.getLastname())
-            .dob(user.getDob())
-            .build();
+        return userMapper.toDetailUser(user);
     }
 
     public List<ListUsers> getAllsUsers() {
@@ -67,14 +55,7 @@ public class UserService {
         var user = userRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTS));
         
-        return DetailUser.builder()
-                .email(user.getEmail())
-                .name(user.getName())
-                .password(user.getPassword())
-                .firstname(user.getFirstname())
-                .lastname(user.getLastname())
-                .dob(user.getDob())
-                .build();
+        return userMapper.toDetailUser(user);
     }
 
     public DetailUser updateUser(String id, SaveUser request) {
@@ -86,23 +67,11 @@ public class UserService {
                 .findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTS));
 
-        user.setEmail(request.getEmail());
-        user.setName(request.getName());
-        user.setPassword(request.getPassword());
-        user.setFirstname(request.getFirstname());
-        user.setLastname(request.getLastname());
-        user.setDob(request.getDob());
+        userMapper.updateUser(request, user);
                 
         userRepository.save(user);
 
-        return DetailUser.builder()
-                .email(user.getEmail())
-                .name(user.getName())
-                .password(user.getPassword())
-                .firstname(user.getFirstname())
-                .lastname(user.getLastname())
-                .dob(user.getDob())
-                .build();
+        return userMapper.toDetailUser(user);
     }
 
     public void deleteAll(List<String> ids) {
