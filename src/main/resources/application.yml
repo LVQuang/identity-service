@@ -13,3 +13,5 @@ spring:
         compose:
             enabled: true
             file: docker-compose.yml
+jwt:
+    signerKey: "Wu43RbJ1wrVutmnWctn4mncX6syRHZL5yXcYbVsxAJMBGpcnXvFGqIswvTfgBJwm"
