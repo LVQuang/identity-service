@@ -14,8 +14,8 @@ public enum SuccessCode {
     USER_DELETED(202, "User information deleted successfully"),
     USER_HIDED(203, "User information hided successfully"),
     
-    USER_LOGIN(204, "User login to system successfully"),
-    USER_LOGIN_FAILED(205, "User login to system failed");
+    AUTHENTICATE(204, "User login to system successfully"),
+    INSTROPECTED(205, "User's Token is valid");
 
     int code;
     String message;

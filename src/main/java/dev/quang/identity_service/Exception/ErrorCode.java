@@ -15,6 +15,8 @@ public enum ErrorCode {
     USER_NOT_EXISTS(402, "User does not exist in system"),
     ID_INVALID(403, "List id of users is invalid"),
     LENGTH_PASSWORD(404, "Password at least 5 characters"),
+    UNAUTHENTICATE(405, "Your password are not correct"),
+    TOKEN_INVALID(406, "Your token is invalid"),
 
     KEY_INVALID(501, "Message key is invalid");
     
