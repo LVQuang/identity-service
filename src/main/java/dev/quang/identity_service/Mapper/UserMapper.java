@@ -1,5 +1,6 @@
 package dev.quang.identity_service.Mapper;
 
+import org.mapstruct.InheritConfiguration;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
@@ -16,7 +17,6 @@ public interface UserMapper {
 
     DetailUser toDetailUser(User request);
 
-    @Mapping(target = "hide", constant = "false")
-    @Mapping(target = "id", ignore = true)
+    @InheritConfiguration(name = "toUser")
     void updateUser(SaveUser request, @MappingTarget User user);
 }
