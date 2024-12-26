@@ -40,8 +40,7 @@ import lombok.extern.slf4j.Slf4j;
 public class AuthenticationService {
     @NonFinal
     @Value("${jwt.signerKey}")
-    protected String signerKey = 
-        "Wu43RbJ1wrVutmnWctn4mncX6syRHZL5yXcYbVsxAJMBGpcnXvFGqIswvTfgBJwm";
+    protected String signerKey;
 
     UserRepository userRepository;
     PasswordEncoder passwordEncoder;
