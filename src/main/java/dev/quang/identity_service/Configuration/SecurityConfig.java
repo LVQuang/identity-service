@@ -12,22 +12,25 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.jose.jws.MacAlgorithm;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
+import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
 import org.springframework.security.web.SecurityFilterChain;
 
+import lombok.var;
 import lombok.experimental.NonFinal;
 
 @Configuration
 public class SecurityConfig {
     @NonFinal
-    @Value("${jwt.signerKey}")
+    @Value("${meta.jwt.signer-key}")
     private String signerKey;
 
-    static final String[] PUBLIC_POST_ENDPOINT = {
-        "/auth"
-    };
-    
-    static final String[] PUBLIC_GET_ENDPOINT = {
-        "/auth"
+    @NonFinal
+    @Value("${meta.authorities-prefix}")
+    private String authoritiesPrefix;
+
+    static final String[] PUBLIC_ENDPOINT = {
+        "/auth/**"
     };
     
     @Bean
@@ -35,12 +38,16 @@ public class SecurityConfig {
         return http
             .csrf(csrf -> csrf.disable())
             .authorizeHttpRequests(authorize -> authorize
-                .requestMatchers(HttpMethod.POST, PUBLIC_POST_ENDPOINT).permitAll()
-                .requestMatchers(HttpMethod.GET, PUBLIC_GET_ENDPOINT).permitAll()
+                .requestMatchers(PUBLIC_ENDPOINT).permitAll()
+                .requestMatchers(HttpMethod.GET, "/user").hasRole("ADMIN")
                 .anyRequest().authenticated()
             )
             .oauth2ResourceServer(oauth2 -> 
-                oauth2.jwt(jwtconfigurer -> jwtconfigurer.decoder(jwtDecoder()))
+                oauth2.jwt(jwtconfigurer -> 
+                    jwtconfigurer
+                        .decoder(jwtDecoder())
+                        .jwtAuthenticationConverter(jwtConverter())
+                )
             )
             .build();
     }
@@ -49,6 +56,15 @@ public class SecurityConfig {
     @Bean
     PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder(10);
+    }
+
+    @Bean
+    JwtAuthenticationConverter jwtConverter() {
+        var jwtAuthoritiesConverter = new JwtGrantedAuthoritiesConverter();
+        jwtAuthoritiesConverter.setAuthorityPrefix(authoritiesPrefix);
+        var jwtConverter = new JwtAuthenticationConverter();
+        jwtConverter.setJwtGrantedAuthoritiesConverter(jwtAuthoritiesConverter);
+        return jwtConverter;
     }
 
     @Bean   

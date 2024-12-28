@@ -15,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -46,6 +47,11 @@ public class UserController {
 
     @GetMapping()
     public ApiResponse<List<ListUsers>> getallUsers() {
+        var auth = SecurityContextHolder.getContext().getAuthentication();
+
+        log.info("Username: {}", auth.getName());
+        auth.getAuthorities().forEach(grantedAuth -> log.info(grantedAuth.getAuthority()));
+
         var response = userService.getAllsUsers();
         var code = SuccessCode.USER_RETRIVED;
         return ApiResponse.<List<ListUsers>>builder()

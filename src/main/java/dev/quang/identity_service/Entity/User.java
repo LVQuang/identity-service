@@ -1,6 +1,7 @@
 package dev.quang.identity_service.Entity;
 
 import java.time.LocalDate;
+import java.util.Set;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -37,4 +38,5 @@ public class User {
     LocalDate dob;
     @Builder.Default()
     boolean hide = false;
+    Set<String> roles;
 }

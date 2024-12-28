@@ -4,10 +4,12 @@ import java.text.ParseException;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
+import java.util.StringJoiner;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.JWSAlgorithm;
@@ -24,6 +26,7 @@ import dev.quang.identity_service.Dto.Request.InstropectRequest;
 import dev.quang.identity_service.Dto.Request.LoginRequest;
 import dev.quang.identity_service.Dto.Response.InstropectResponse;
 import dev.quang.identity_service.Dto.Response.LoginResponse;
+import dev.quang.identity_service.Entity.User;
 import dev.quang.identity_service.Exception.AppException;
 import dev.quang.identity_service.Exception.ErrorCode;
 import dev.quang.identity_service.Respository.UserRepository;
@@ -39,8 +42,13 @@ import lombok.extern.slf4j.Slf4j;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal =  true)
 public class AuthenticationService {
     @NonFinal
-    @Value("${jwt.signerKey}")
+    @Value("${meta.jwt.signer-key}")
     protected String signerKey;
+
+    @NonFinal
+    @Value("${meta.issuer}")
+    protected String issuer;
+
 
     UserRepository userRepository;
     PasswordEncoder passwordEncoder;
@@ -73,7 +81,7 @@ public class AuthenticationService {
             throw new AppException(ErrorCode.UNAUTHENTICATE);
         }
 
-        var token = genToken(request.getEmail());
+        var token = genToken(user);
 
         return LoginResponse.builder()
             .result(authenticate)
@@ -81,16 +89,17 @@ public class AuthenticationService {
             .build();
     } 
 
-    private String genToken(String email) {
+    String genToken(User user) {
         JWSHeader header = new JWSHeader(JWSAlgorithm.HS512);
 
         JWTClaimsSet claimsSet = new JWTClaimsSet.Builder()
-            .subject(email)
-            .issuer("dev.quang")
+            .subject(user.getEmail())
+            .issuer(issuer)
             .issueTime(new Date())
             .expirationTime(new Date(
                 Instant.now().plus(1, ChronoUnit.HOURS).toEpochMilli()
             ))
+            .claim("scope", buildScope(user))
             .build();
 
         Payload payload = new Payload(claimsSet.toJSONObject());    
@@ -104,5 +113,14 @@ public class AuthenticationService {
             throw new RuntimeException(e);
         } 
         return object.serialize();   
+    }
+
+    String buildScope(User user) {
+        StringJoiner result = new StringJoiner(" ");
+        var roles = user.getRoles();
+        if (!CollectionUtils.isEmpty(roles)) {
+            roles.forEach(result::add);
+        }
+        return result.toString();
     }
 }

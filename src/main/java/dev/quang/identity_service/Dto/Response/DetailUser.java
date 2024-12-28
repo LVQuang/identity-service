@@ -1,6 +1,7 @@
 package dev.quang.identity_service.Dto.Response;
 
 import java.time.LocalDate;
+import java.util.Set;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -17,8 +18,8 @@ import lombok.experimental.FieldDefaults;
 public class DetailUser {
     String email;
     String name;
-    String password;
     String firstname;
     String lastname;
     LocalDate dob;
+    Set<String> roles;
 }
