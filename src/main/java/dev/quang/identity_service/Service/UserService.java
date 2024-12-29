@@ -2,6 +2,7 @@ package dev.quang.identity_service.Service;
 
 import java.util.List;
 
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import dev.quang.identity_service.Dto.Request.SaveUser;
@@ -24,6 +25,14 @@ import lombok.extern.slf4j.Slf4j;
 public class UserService {
     UserRepository userRepository;
     UserMapper userMapper;
+
+    public DetailUser getMyInfor() {
+        var auth = SecurityContextHolder.getContext().getAuthentication();
+        var email = auth.getName();
+        var user = userRepository.findByEmail(email)
+            .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTS));
+        return userMapper.toDetailUser(user);
+    } 
 
     public DetailUser addUser(SaveUser request) {
         var user = userRepository.findByEmail(request.getEmail())

@@ -15,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -26,6 +27,7 @@ import java.util.List;
 import org.springframework.web.bind.annotation.PutMapping;
 
 
+
 @Slf4j
 @RestController
 @RequestMapping("/user")
@@ -33,6 +35,18 @@ import org.springframework.web.bind.annotation.PutMapping;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class UserController {
     UserService userService;
+
+    @GetMapping("/my-info")
+    public ApiResponse<DetailUser> getMyInfor() {
+        var response = userService.getMyInfor();
+        var code = SuccessCode.USER_RETRIVED;
+        return ApiResponse.<DetailUser>builder()
+            .code(code.getCode())
+            .message(code.getMessage())
+            .data(response)
+            .build();
+    }
+    
 
     @PostMapping()
     public ApiResponse<DetailUser> createUser(@RequestBody @Valid SaveUser request) {
@@ -46,6 +60,7 @@ public class UserController {
     }
 
     @GetMapping()
+    @PreAuthorize("hasRole('ADMIN')")
     public ApiResponse<List<ListUsers>> getallUsers() {
         var auth = SecurityContextHolder.getContext().getAuthentication();
 

@@ -5,7 +5,7 @@ import javax.crypto.spec.SecretKeySpec;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -20,6 +20,7 @@ import lombok.var;
 import lombok.experimental.NonFinal;
 
 @Configuration
+@EnableMethodSecurity
 public class SecurityConfig {
     @NonFinal
     @Value("${meta.jwt.signer-key}")
@@ -39,7 +40,6 @@ public class SecurityConfig {
             .csrf(csrf -> csrf.disable())
             .authorizeHttpRequests(authorize -> authorize
                 .requestMatchers(PUBLIC_ENDPOINT).permitAll()
-                .requestMatchers(HttpMethod.GET, "/user").hasRole("ADMIN")
                 .anyRequest().authenticated()
             )
             .oauth2ResourceServer(oauth2 -> 
