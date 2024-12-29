@@ -13,9 +13,10 @@ import dev.quang.identity_service.Helper.UserMapperHelper;
 
 @Mapper(componentModel = "spring", uses = UserMapperHelper.class)
 public interface UserMapper {
-    @Mapping(target = "password", qualifiedByName = "encodePassword")
-    @Mapping(target = "hide", constant = "false")
     @Mapping(target = "id", ignore = true)
+    @Mapping(target = "hide", constant = "false")
+    @Mapping(target = "roles", qualifiedByName = "transRoles")
+    @Mapping(target = "password", qualifiedByName = "encodePassword")
     User toUser(SaveUser request);
 
     DetailUser toDetailUser(User request);

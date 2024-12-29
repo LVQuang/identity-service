@@ -1,6 +1,8 @@
 package dev.quang.identity_service.Dto.Request;
 
 import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.Set;
 
 import jakarta.validation.constraints.Size;
 import lombok.AccessLevel;
@@ -23,4 +25,6 @@ public class SaveUser {
     String firstname;
     String lastname;
     LocalDate dob;
+    @Builder.Default
+    Set<String> roles = new HashSet<String>();
 }
