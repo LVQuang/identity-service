@@ -1,11 +1,13 @@
 package dev.quang.identity_service.Exception;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import dev.quang.identity_service.Dto.ApiResponse;
+import lombok.var;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -15,9 +17,9 @@ public class GlobalHandler {
     ResponseEntity<ApiResponse<Void>> handleDefaultException(Exception exception) {
         var error = ErrorCode.UNCATEGORIZED_ERROR;
 
-        log.error(exception.getMessage());
+        exception.printStackTrace();
 
-        return ResponseEntity.badRequest()
+        return ResponseEntity.status(error.getStatusCode())
                 .body(ApiResponse.<Void>builder()
                     .code(error.getCode())
                     .message(error.getMessage())    
@@ -28,7 +30,18 @@ public class GlobalHandler {
     ResponseEntity<ApiResponse<Void>> handleAppException(AppException exception) {
         var error = exception.getError();
 
-        return ResponseEntity.badRequest()
+        return ResponseEntity.status(error.getStatusCode())
+                .body(ApiResponse.<Void>builder()
+                    .code(error.getCode())
+                    .message(error.getMessage())    
+                    .build());
+    }
+
+    @ExceptionHandler(AuthorizationDeniedException.class) 
+    ResponseEntity<ApiResponse<Void>> handleAuthorizationDeniedException(AuthorizationDeniedException exception) {
+        var error = ErrorCode.UNAUTHORIZED;
+
+        return ResponseEntity.status(error.getStatusCode())
                 .body(ApiResponse.<Void>builder()
                     .code(error.getCode())
                     .message(error.getMessage())    
@@ -46,7 +59,7 @@ public class GlobalHandler {
             ? ErrorCode.valueOf(enumKey) 
             : ErrorCode.valueOf("KEY_INVALID");
 
-        return ResponseEntity.badRequest()
+        return ResponseEntity.status(error.getStatusCode())
                 .body(ApiResponse.<Void>builder()
                     .code(error.getCode())
                     .message(error.getMessage())    
