@@ -20,6 +20,9 @@ public enum ErrorCode {
     LENGTH_PASSWORD(404, "Password at least 5 characters", HttpStatus.BAD_REQUEST),
     PASSWORD_WRONG(405, "Your password are not correct", HttpStatus.BAD_REQUEST),
     TOKEN_INVALID(406, "Your token is invalid", HttpStatus.BAD_REQUEST),
+    UNAUTHENTICATED(407, "Your account is unauthenticated", HttpStatus.UNAUTHORIZED),
+    UNAUTHORIZED(408, "Your account doesn't have permissions", HttpStatus.FORBIDDEN),
+
 
     KEY_INVALID(501, "Message key is invalid", HttpStatus.BAD_REQUEST);
     
