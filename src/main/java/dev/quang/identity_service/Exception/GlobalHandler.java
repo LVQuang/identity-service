@@ -17,7 +17,7 @@ public class GlobalHandler {
 
         log.error(exception.getMessage());
 
-        return ResponseEntity.badRequest()
+        return ResponseEntity.status(error.getStatusCode())
                 .body(ApiResponse.<Void>builder()
                     .code(error.getCode())
                     .message(error.getMessage())    
@@ -28,7 +28,7 @@ public class GlobalHandler {
     ResponseEntity<ApiResponse<Void>> handleAppException(AppException exception) {
         var error = exception.getError();
 
-        return ResponseEntity.badRequest()
+        return ResponseEntity.status(error.getStatusCode())
                 .body(ApiResponse.<Void>builder()
                     .code(error.getCode())
                     .message(error.getMessage())    
@@ -46,7 +46,7 @@ public class GlobalHandler {
             ? ErrorCode.valueOf(enumKey) 
             : ErrorCode.valueOf("KEY_INVALID");
 
-        return ResponseEntity.badRequest()
+        return ResponseEntity.status(error.getStatusCode())
                 .body(ApiResponse.<Void>builder()
                     .code(error.getCode())
                     .message(error.getMessage())    
