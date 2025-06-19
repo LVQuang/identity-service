@@ -77,7 +77,7 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    public ApiResponse<DetailUser> getUser(@PathVariable("id") String id) {
+    public ApiResponse<DetailUser> getUser(@PathVariable String id) {
         var response = userService.getUser(id); 
         var code = SuccessCode.USER_RETRIVED;
         return ApiResponse.<DetailUser>builder()
@@ -109,7 +109,7 @@ public class UserController {
     }
 
     @DeleteMapping("/{id}")
-    public ApiResponse<Void> deleteUser(@PathVariable("id") String id) {
+    public ApiResponse<Void> deleteUser(@PathVariable String id) {
         userService.deleteUser(id);
         var code = SuccessCode.USER_DELETED;
         return ApiResponse.<Void>builder()
@@ -129,7 +129,7 @@ public class UserController {
     }
 
     @PatchMapping("/{id}")
-    public ApiResponse<Void> hideUser(@PathVariable("id") String id) {
+    public ApiResponse<Void> hideUser(@PathVariable String id) {
         userService.hideUser(id);
         var code = SuccessCode.USER_HIDED;      
         return ApiResponse.<Void>builder()

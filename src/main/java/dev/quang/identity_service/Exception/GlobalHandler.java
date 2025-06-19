@@ -7,7 +7,6 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import dev.quang.identity_service.Dto.ApiResponse;
-import lombok.var;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
