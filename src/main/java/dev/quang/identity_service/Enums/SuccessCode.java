@@ -15,7 +15,10 @@ public enum SuccessCode {
     USER_HIDED(203, "User information hided successfully"),
     
     AUTHENTICATE(204, "User login to system successfully"),
-    INSTROPECTED(205, "User's Token is valid");
+    INSTROPECTED(205, "User's Token is valid"),
+
+    PERMISSION_CREATED(206, "Permission created successfully"),
+    PERMISSION_GET_ALL(207, "Permission get all successfully");
 
     int code;
     String message;

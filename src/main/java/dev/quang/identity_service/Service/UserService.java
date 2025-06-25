@@ -47,6 +47,7 @@ public class UserService {
         return userMapper.toDetailUser(user);
     }
 
+    // Notice: Why don't use mapping 
     public List<ListUsers> getAllsUsers() {
         var users = userRepository.findAll();
         return users
